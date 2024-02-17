@@ -20,7 +20,7 @@ services:
     volumes:
       - conduktor_data:/var/conduktor
     environment:
-      CDK_ORGANIZATION_NAME: "demo"
+      CDK_ORGANIZATION_NAME: "python_demo_medium"
       CDK_ADMIN_EMAIL: "admin@admin.io"
       CDK_ADMIN_PASSWORD: "admin"
       CDK_DATABASE_URL: "postgresql://conduktor:some_password@postgresql:5432/conduktor-platform"
