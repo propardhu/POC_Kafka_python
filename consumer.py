@@ -1,16 +1,36 @@
-from kafka import KafkaConsumer
+from confluent_kafka import Consumer, KafkaError, KafkaException
 
-# Configure the consumer connection to the Kafka server
-consumer = KafkaConsumer(
-    'topic_python_medium_demo',
-    bootstrap_servers='localhost:9092',
-    auto_offset_reset='earliest',  # Start reading at the earliest message
-    group_id='test-group'          # Consumer group ID
-)
+# Adjusted consumer configuration
+config = {
+    'bootstrap.servers': 'localhost:9092',
+    'group.id': 'new-test-group',  # Consider using a new group ID for a fresh start
+    'auto.offset.reset': 'earliest'  # Ensure we start from the beginning of the topic
+}
+
+consumer = Consumer(**config)
+consumer.subscribe(['topic_python_medium_demo'])
 
 def consume_messages():
-    for message in consumer:
-        print(f"Received message: {message.value.decode('utf-8')}")
+    try:
+        while True:
+            msg = consumer.poll(timeout=1.0)  # Increase poll timeout if needed
+
+            if msg is None:
+                continue  # No message, normal behavior
+
+            if msg.error():
+                if msg.error().code() == KafkaError._PARTITION_EOF:
+                    # End of partition event, normal behavior but can adjust if not desired
+                    print(f'End of partition reached {msg.topic()}/{msg.partition()}')
+                else:
+                    print(f'Error: {msg.error()}')
+            else:
+                # Message is successfully received
+                print(f"Received message: {msg.value().decode('utf-8')}")
+    except KeyboardInterrupt:
+        print("Stopping consumer...")
+    finally:
+        consumer.close()
 
 if __name__ == "__main__":
     consume_messages()
