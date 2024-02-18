@@ -2,7 +2,7 @@ from kafka import KafkaConsumer
 
 # Configure the consumer connection to the Kafka server
 consumer = KafkaConsumer(
-    'test_topic',
+    'topic_python_medium_demo',
     bootstrap_servers='localhost:9092',
     auto_offset_reset='earliest',  # Start reading at the earliest message
     group_id='test-group'          # Consumer group ID
